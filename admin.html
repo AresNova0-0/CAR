@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LuxeCar — Administration</title><link rel="stylesheet" href="./style.css">
+</head>
+<body data-admin="true">
+<header class="nav">
+<a class="logo" href="./index.html">♜ LUXE<span>CAR</span></a>
+<nav><a class="active" href="./admin.html">Quản trị</a><a href="./cars.html">Kho xe</a></nav>
+<div class="navright"><button class="ghostNav" data-logout>ĐĂNG XUẤT</button></div>
+</header>
+<main class="adminPage">
+<div class="adminTop"><div><small>LUXECAR OPERATIONS</small><h1>Control Room</h1></div><span class="statusDot">● SYSTEM READY</span></div>
+<section class="adminCards">
+<article><small>INVENTORY</small><strong id="carTotal">—</strong><span>mẫu xe</span></article>
+<article><small>ORDERS</small><strong id="orderTotal">—</strong><span>yêu cầu</span></article>
+<article><small>CLIENTS</small><strong id="userTotal">—</strong><span>tài khoản</span></article>
+</section>
+
+<section class="adminPanel">
+<div class="adminPanelHead"><div><small>CLIENT DIRECTORY</small><h2>Tài khoản đăng ký</h2><p class="muted">Admin chỉ có quyền xem tên tài khoản và email đăng ký.</p></div><input id="userSearch" class="adminSearch" placeholder="Tìm tên hoặc email…"></div>
+<div class="adminTableWrap"><table class="adminTable"><thead><tr><th>Tên tài khoản</th><th>Email đăng ký</th></tr></thead><tbody id="adminUsers"></tbody></table></div>
+</section>
+
+
+<section class="adminPanel"><h2>Kiến trúc production</h2><p>GitHub Pages → API → Database → Payment Gateway → Email → Admin. Secret keys chỉ nằm ở backend.</p></section>
+</main>
+
+<script src="./config.js"></script><script src="./data.js"></script><script src="./auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function render(){
+    const q=$('userSearch').value.trim().toLowerCase();
+    const users=LuxeAuth.users().filter(u=>(u.name+' '+u.email).toLowerCase().includes(q));
+    $('userTotal').textContent=users.length;
+    $('adminUsers').innerHTML=users.map(u=>`<tr><td><strong>${esc(u.name)}</strong></td><td>${esc(u.email)}</td></tr>`).join('')||'<tr><td colspan="2" class="muted">Không có tài khoản đăng ký.</td></tr>';
+  }
+  $('carTotal').textContent='—';
+  $('orderTotal').textContent='—';
+  render();
+  $('userSearch').addEventListener('input',render);
+});
+</script>
+</body></html>
